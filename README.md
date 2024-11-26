@@ -3,7 +3,7 @@
 
 Course Project
 
-Section: [C02]
+Section: [L01, L06]
 
 Team Information
 Member 1 MacID: [jaina78]
