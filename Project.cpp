@@ -1,5 +1,7 @@
 #include <iostream>
+
 #include "MacUILib.h"
+#include "Player.h"
 #include "objPos.h"
 
 using namespace std;
@@ -19,87 +21,73 @@ void LoopDelay(void);
 void CleanUp(void);
 
 // Initialize the player object with objPos
-objPos player(5, 5, '@'); // Player starts at position (5, 5) with symbol '@'
-objPos otherObject(3, 3, '$'); // Another object at position (3, 3) with symbol '$'
+objPos otherObject(3, 3,
+                   '$');  // Another object at position (3, 3) with symbol '$'
 
-int main(void)
-{
+Player* player = nullptr;
 
-    Initialize();
+int main(void) {
+  Initialize();
 
-    while(exitFlag == false)  
+  while (exitFlag == false) {
+    GetInput();
+    RunLogic();
+    DrawScreen();
+    LoopDelay();
+  }
+
+  CleanUp();
+}
+
+void Initialize(void) {
+  MacUILib_init();
+  MacUILib_clearScreen();
+
+  GameMechs* gameMechs = new GameMechs(LENGTH, HEIGHT);
+  player = new Player(gameMechs);
+
+  exitFlag = false;
+}
+
+void GetInput(void) {}
+
+void RunLogic(void) {}
+
+void DrawScreen(void) {
+  MacUILib_clearScreen();
+
+  // Iterate through the grid to draw the game board
+  for (int y = 0; y < HEIGHT; y++)  // Loop through rows
+  {
+    for (int x = 0; x < LENGTH; x++)  // Loop through columns
     {
-        GetInput();
-        RunLogic();
-        DrawScreen();
-        LoopDelay();
+      // Print border characters
+      if (y == 0 || y == HEIGHT - 1 || x == 0 || x == LENGTH - 1) {
+        MacUILib_printf("#");  // Draw border
+      }
+      // Print player object at its position
+      else if (x == player->getPlayerPos().getObjPos().pos->x &&
+               y == player->getPlayerPos().getObjPos().pos->y) {
+        MacUILib_printf("%c", player->getPlayerPos().getSymbol());
+      }
+      // Print another object at its position (e.g., $ object)
+      else if (x == otherObject.getObjPos().pos->x &&
+               y == otherObject.getObjPos().pos->y) {
+        MacUILib_printf("%c", otherObject.getSymbol());
+      } else {
+        MacUILib_printf(" ");  // Empty space
+      }
     }
-
-    CleanUp();
-
+    MacUILib_printf("\n");
+  }
 }
 
-
-void Initialize(void)
-{
-    MacUILib_init();
-    MacUILib_clearScreen();
-
-    exitFlag = false;
+void LoopDelay(void) {
+  MacUILib_Delay(DELAY_CONST);  // 0.1s delay
 }
 
-void GetInput(void)
-{
-   
-}
+void CleanUp(void) {
+  MacUILib_clearScreen();
 
-void RunLogic(void)
-{
-    
-}
-
-void DrawScreen(void)
-{
-    MacUILib_clearScreen();    
-
-    // Iterate through the grid to draw the game board
-    for (int y = 0; y < HEIGHT; y++)  // Loop through rows
-    {
-        for (int x = 0; x < LENGTH; x++)  // Loop through columns
-        {
-            // Print border characters
-            if (y == 0 || y == HEIGHT - 1 || x == 0 || x == LENGTH - 1)
-            {
-                MacUILib_printf("#");  // Draw border
-            }
-            // Print player object at its position
-            else if (x == player.getObjPos().pos->x && y == player.getObjPos().pos->y)
-            {
-                MacUILib_printf("%c", player.getSymbol());
-            }
-            // Print another object at its position (e.g., $ object)
-            else if (x == otherObject.getObjPos().pos->x && y == otherObject.getObjPos().pos->y)
-            {
-                MacUILib_printf("%c", otherObject.getSymbol());
-            }
-            else
-            {
-                MacUILib_printf(" ");  // Empty space
-            }
-        }
-        MacUILib_printf("\n");
-    }
-}
-
-void LoopDelay(void)
-{
-    MacUILib_Delay(DELAY_CONST); // 0.1s delay
-}
-
-
-void CleanUp(void)
-{
-    MacUILib_clearScreen();    
-
-    MacUILib_uninit();
+  MacUILib_uninit();
 }
