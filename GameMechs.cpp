@@ -1,76 +1,37 @@
 #include "GameMechs.h"
 
-GameMechs::GameMechs()
-{
-    
-}
+#include "MacUILib.h"
 
-GameMechs::GameMechs(int boardX, int boardY)
-{
-    
+GameMechs::GameMechs() {}
+
+GameMechs::GameMechs(int boardX, int boardY) {
+  boardSizeX = boardX;
+  boardSizeY = boardY;
 }
 
 // do you need a destructor?
-GameMechs::~GameMechs()
-{
-    
-}
+GameMechs::~GameMechs() {}
 
-bool GameMechs::getExitFlagStatus() const
-{
+bool GameMechs::getExitFlagStatus() const {}
 
-}
+bool GameMechs::getLoseFlagStatus() const {}
 
-bool GameMechs::getLoseFlagStatus() const
-{
+char GameMechs::getInput() const { return input; }
 
-}
-    
+int GameMechs::getScore() const {}
 
-char GameMechs::getInput() const
-{
+void GameMechs::incrementScore() {}
 
-}
+int GameMechs::getBoardSizeX() const { return boardSizeX; }
 
-int GameMechs::getScore() const
-{
+int GameMechs::getBoardSizeY() const { return boardSizeY; }
 
-}
+void GameMechs::setExitTrue() {}
 
-void GameMechs::incrementScore()
-{
-    
-}
+void GameMechs::setLoseFlag() {}
 
-int GameMechs::getBoardSizeX() const
-{
+void GameMechs::setInput(char this_input) { input = this_input; }
 
-}
-
-int GameMechs::getBoardSizeY() const
-{
-
-}
-
-
-void GameMechs::setExitTrue()
-{
-
-}
-
-void GameMechs::setLoseFlag()
-{
-    
-}
-
-void GameMechs::setInput(char this_input)
-{
-
-}
-
-void GameMechs::clearInput()
-{
-
-}
+void GameMechs::clearInput() { input = 0; }
 
 // More methods should be added here

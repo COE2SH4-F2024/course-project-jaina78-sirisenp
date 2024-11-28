@@ -25,6 +25,7 @@ objPos otherObject(3, 3,
                    '$');  // Another object at position (3, 3) with symbol '$'
 
 Player* player = nullptr;
+GameMechs* gameMechs = nullptr;
 
 int main(void) {
   Initialize();
@@ -43,15 +44,24 @@ void Initialize(void) {
   MacUILib_init();
   MacUILib_clearScreen();
 
-  GameMechs* gameMechs = new GameMechs(LENGTH, HEIGHT);
+  gameMechs = new GameMechs(LENGTH, HEIGHT);
   player = new Player(gameMechs);
+  player->getPlayerPos().setObjPos(10, 5, '*');
 
   exitFlag = false;
 }
 
-void GetInput(void) {}
-
-void RunLogic(void) {}
+void GetInput(void) {
+  if (MacUILib_hasChar() == 1) {
+    char input = MacUILib_getChar();
+    gameMechs->setInput(input);
+  }
+}
+void RunLogic(void) {
+  player->updatePlayerDir();
+  player->movePlayer();
+  gameMechs->clearInput();
+}
 
 void DrawScreen(void) {
   MacUILib_clearScreen();
@@ -80,6 +90,8 @@ void DrawScreen(void) {
     }
     MacUILib_printf("\n");
   }
+  MacUILib_printf("\n%d, %d", player->getPlayerPos().getObjPos().pos->x,
+                  player->getPlayerPos().getObjPos().pos->y);
 }
 
 void LoopDelay(void) {
