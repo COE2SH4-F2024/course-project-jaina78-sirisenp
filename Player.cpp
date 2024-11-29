@@ -3,6 +3,7 @@
 Player::Player(GameMechs* thisGMRef) {
   mainGameMechsRef = thisGMRef;
   myDir = STOP;
+  playerPos = objPos(10, 5, '*');
   // more actions to be included
 }
 

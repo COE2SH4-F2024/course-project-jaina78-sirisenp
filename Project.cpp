@@ -11,8 +11,6 @@ using namespace std;
 #define HEIGHT 10
 #define LENGTH 20
 
-bool exitFlag;
-
 void Initialize(void);
 void GetInput(void);
 void RunLogic(void);
@@ -30,7 +28,7 @@ GameMechs* gameMechs = nullptr;
 int main(void) {
   Initialize();
 
-  while (exitFlag == false) {
+  while (!gameMechs->getExitFlagStatus()) {
     GetInput();
     RunLogic();
     DrawScreen();
@@ -46,9 +44,6 @@ void Initialize(void) {
 
   gameMechs = new GameMechs(LENGTH, HEIGHT);
   player = new Player(gameMechs);
-  player->getPlayerPos().setObjPos(10, 5, '*');
-
-  exitFlag = false;
 }
 
 void GetInput(void) {
@@ -60,6 +55,9 @@ void GetInput(void) {
 void RunLogic(void) {
   player->updatePlayerDir();
   player->movePlayer();
+  if (gameMechs->getInput() == 27) {
+    gameMechs->setExitTrue();
+  }
   gameMechs->clearInput();
 }
 
@@ -90,8 +88,12 @@ void DrawScreen(void) {
     }
     MacUILib_printf("\n");
   }
-  MacUILib_printf("\n%d, %d", player->getPlayerPos().getObjPos().pos->x,
-                  player->getPlayerPos().getObjPos().pos->y);
+  MacUILib_printf("Score: %d", gameMechs->getScore());
+  MacUILib_printf("\n%d, %d, %c\n", player->getPlayerPos().getObjPos().pos->x,
+                  player->getPlayerPos().getObjPos().pos->y,
+                  player->getPlayerPos().getSymbol());
+
+  MacUILib_printf("Press 'Esc' to exit");
 }
 
 void LoopDelay(void) {
