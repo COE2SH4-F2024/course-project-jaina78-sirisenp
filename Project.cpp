@@ -43,8 +43,9 @@ void Initialize(void)
 
   gameMechs = new GameMechs(LENGTH, HEIGHT);
   player = new Player(gameMechs);
+
   // Initial food generation
-  gameMechs->generateFood(player->getPlayerPos());
+  gameMechs->generateFood(player->getPlayerPos()->getHeadElement());
 }
 
 void GetInput(void)
@@ -58,7 +59,7 @@ void GetInput(void)
 void RunLogic(void)
 {
   player->updatePlayerDir();
-  player->movePlayer();
+  player->movePlayer(LENGTH, HEIGHT);
   if (gameMechs->getInput() == 27)
   {
     gameMechs->setExitTrue();
@@ -70,41 +71,60 @@ void DrawScreen(void)
 {
   MacUILib_clearScreen();
 
-  // Iterate through the grid to draw the game board
-  for (int y = 0; y < HEIGHT; y++) // Loop through rows
+  // Draw the game board
+  for (int y = 0; y < HEIGHT; y++)
   {
-    for (int x = 0; x < LENGTH; x++) // Loop through columns
+    for (int x = 0; x < LENGTH; x++)
     {
-      // Print border characters
       if (y == 0 || y == HEIGHT - 1 || x == 0 || x == LENGTH - 1)
       {
-        MacUILib_printf("#"); // Draw border
-      }
-      // Print player object at its position
-      else if (x == player->getPlayerPos().getObjPos().pos->x &&
-               y == player->getPlayerPos().getObjPos().pos->y)
-      {
-        MacUILib_printf("%c", player->getPlayerPos().getSymbol());
-      }
-      // Print another object at its position (e.g., $ object)
-      else if (x == gameMechs->getFoodPos().getObjPos().pos->x &&
-               y == gameMechs->getFoodPos().getObjPos().pos->y)
-      {
-        MacUILib_printf("%c", gameMechs->getFoodPos().getSymbol());
+        MacUILib_printf("#");
       }
       else
       {
-        MacUILib_printf(" "); // Empty space
+        bool isPrinted = false;
+
+        // Iterate through the positions in playerPosList
+        objPosArrayList *playerPosList = player->getPlayerPos(); // Player positions
+        for (int i = 0; i < playerPosList->getSize(); i++)
+        {
+          objPos currentBodyPart = playerPosList->getElement(i); // i-th body part
+          int snakeX = currentBodyPart.getObjPos().pos->x;
+          int snakeY = currentBodyPart.getObjPos().pos->y;
+
+          // Check if position matches the current grid position
+          if (x == snakeX && y == snakeY)
+          {
+            MacUILib_printf("%c", currentBodyPart.getSymbol()); // Snake body
+            isPrinted = true;
+            break;
+          }
+        }
+
+        // If no snake body is found, print food
+        if (!isPrinted && x == gameMechs->getFoodPos().getObjPos().pos->x &&
+            y == gameMechs->getFoodPos().getObjPos().pos->y)
+        {
+          MacUILib_printf("%c", gameMechs->getFoodPos().getSymbol()); // Print food
+        }
+
+        // If no snake body or food, print an empty space
+        else if (!isPrinted)
+        {
+          MacUILib_printf(" ");
+        }
       }
     }
     MacUILib_printf("\n");
   }
-  MacUILib_printf("Score: %d", gameMechs->getScore());
-  MacUILib_printf("\n%d, %d, %c\n", player->getPlayerPos().getObjPos().pos->x,
-                  player->getPlayerPos().getObjPos().pos->y,
-                  player->getPlayerPos().getSymbol());
 
-  MacUILib_printf("Press 'Esc' to exit");
+  // Print score
+  MacUILib_printf("Score: %d", gameMechs->getScore());
+  MacUILib_printf("\n%d, %d, %c\n", player->getPlayerPos()->getElement(0).getObjPos().pos->x, // Head position
+                  player->getPlayerPos()->getElement(0).getObjPos().pos->y,
+                  player->getPlayerPos()->getElement(0).getSymbol()); // Head symbol
+
+  MacUILib_printf("Press 'ESC' to exit");
 }
 
 void LoopDelay(void)

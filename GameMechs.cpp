@@ -1,5 +1,5 @@
 #include "GameMechs.h"
-
+#include "Player.h"
 #include "MacUILib.h"
 
 GameMechs::GameMechs() {}
@@ -10,9 +10,9 @@ GameMechs::GameMechs(int boardX, int boardY)
   boardSizeY = boardY;
   score = 0;
 
-  srand(time(nullptr)); // Initialize random seed
+  srand(time(nullptr)); // Random seed
 
-  // Generate initial food position, ensuring it does not overlap with the player at (0, 0)
+  // Initial food position, no overlap with player
   generateFood(objPos(0, 0, '*'));
 }
 
@@ -49,11 +49,10 @@ void GameMechs::generateFood(objPos blockOff)
   // Make sure food does not overlap with the blockOff pos
   do
   {
-    x = rand() % (boardSizeX - 2) + 1; // Random x within board boundaries
-    y = rand() % (boardSizeY - 2) + 1; // Random y within board boundaries
+    x = rand() % (boardSizeX - 2) + 1;
+    y = rand() % (boardSizeY - 2) + 1;
   } while (x == blockOff.getObjPos().pos->x && y == blockOff.getObjPos().pos->y);
 
-  // Set the food position and symbol
   food.setObjPos(x, y, '$');
 }
 
