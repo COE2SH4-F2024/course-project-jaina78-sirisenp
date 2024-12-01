@@ -1,50 +1,50 @@
 #ifndef GAMEMECHS_H
 #define GAMEMECHS_H
 
-#include <cstdlib>
 #include <time.h>
+
+#include <cstdlib>
 
 #include "objPos.h"
 #include "objPosArrayList.h"
 
 using namespace std;
 
-class GameMechs
-{
-private:
-    char input;
-    bool exitFlag;
-    bool loseFlag;
-    int score;
+class GameMechs {
+ private:
+  char input;
+  bool exitFlag;
+  bool loseFlag;
+  int score;
 
-    int boardSizeX;
-    int boardSizeY;
+  int boardSizeX;
+  int boardSizeY;
 
-    objPos food;
+  objPos food;
 
-public:
-    GameMechs();
-    GameMechs(int boardX, int boardY);
-    ~GameMechs(); // is this one needed at all? Why or why not?
+ public:
+  GameMechs();
+  GameMechs(int boardX, int boardY);
+  ~GameMechs();  // is this one needed at all? Why or why not?
 
-    bool getExitFlagStatus() const;
-    void setExitTrue();
-    bool getLoseFlagStatus() const;
-    void setLoseFlag();
+  bool getExitFlagStatus() const;
+  void setExitTrue();
+  bool getLoseFlagStatus() const;
+  void setLoseFlag();
 
-    char getInput() const;
-    void setInput(char this_input);
-    void clearInput();
+  char getInput() const;
+  void setInput(char this_input);
+  void clearInput();
 
-    int getBoardSizeX() const;
-    int getBoardSizeY() const;
+  int getBoardSizeX() const;
+  int getBoardSizeY() const;
 
-    int getScore() const;
-    void incrementScore();
+  int getScore() const;
+  void incrementScore();
 
-    // More methods should be added here
-    void generateFood(objPos blockOff);
-    objPos getFoodPos() const;
+  // More methods should be added here
+  void generateFood(objPosArrayList& blockOff);
+  objPos getFoodPos() const;
 };
 
 #endif

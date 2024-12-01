@@ -1,19 +1,19 @@
 #include "GameMechs.h"
-#include "Player.h"
+
 #include "MacUILib.h"
+#include "Player.h"
 
 GameMechs::GameMechs() {}
 
-GameMechs::GameMechs(int boardX, int boardY)
-{
+GameMechs::GameMechs(int boardX, int boardY) {
   boardSizeX = boardX;
   boardSizeY = boardY;
   score = 0;
 
-  srand(time(nullptr)); // Random seed
+  srand(time(nullptr));  // Random seed
 
   // Initial food position, no overlap with player
-  generateFood(objPos(0, 0, '*'));
+  // generateFood(objPos(0, 0, '*'));
 }
 
 // do you need a destructor?
@@ -42,21 +42,29 @@ void GameMechs::setInput(char this_input) { input = this_input; }
 void GameMechs::clearInput() { input = 0; }
 
 // More methods should be added here
-void GameMechs::generateFood(objPos blockOff)
-{
+void GameMechs::generateFood(objPosArrayList& blockOffList) {
   int x, y;
 
-  // Make sure food does not overlap with the blockOff pos
-  do
-  {
+  do {
     x = rand() % (boardSizeX - 2) + 1;
     y = rand() % (boardSizeY - 2) + 1;
-  } while (x == blockOff.getObjPos().pos->x && y == blockOff.getObjPos().pos->y);
 
+    bool overlap = false;
+    for (int i = 0; i < blockOffList.getSize(); ++i) {
+      objPos temp = blockOffList.getElement(i);
+      if (temp.getObjPos().pos->x == x && temp.getObjPos().pos->y == y) {
+        overlap = true;
+        break;
+      }
+    }
+
+    if (!overlap) {
+      break;
+    }
+  } while (true);
+
+  // Set the food's position
   food.setObjPos(x, y, '$');
 }
 
-objPos GameMechs::getFoodPos() const
-{
-  return food;
-}
+objPos GameMechs::getFoodPos() const { return food; }
