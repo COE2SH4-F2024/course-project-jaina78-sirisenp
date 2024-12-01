@@ -1,7 +1,6 @@
 #include "Player.h"
 
-Player::Player(GameMechs *thisGMRef)
-{
+Player::Player(GameMechs *thisGMRef) {
   mainGameMechsRef = thisGMRef;
   myDir = STOP;
   playerPosList = new objPosArrayList();
@@ -9,113 +8,97 @@ Player::Player(GameMechs *thisGMRef)
   // more actions to be included
 }
 
-Player::~Player()
-{
+Player::~Player() {
   // delete any heap members here
   delete playerPosList;
 }
 
-objPos Player::getPlayerHead() const
-{
+objPos Player::getPlayerHead() const {
   // return the reference to the playerPos arrray list
   return playerPosList->getHeadElement();
 }
 
 objPosArrayList *Player::getPlayerPos() const { return playerPosList; }
 
-void Player::updatePlayerDir()
-{
+void Player::updatePlayerDir() {
   // PPA3 input processing logic
   int input = mainGameMechsRef->getInput();
-  switch (input)
-  {
-  case 87:
-  case 119: // w
-    if (myDir != DOWN)
-    {
-      myDir = UP;
-    }
-    break;
-  case 65:
-  case 97: // a
-    if (myDir != RIGHT)
-    {
-      myDir = LEFT;
-    }
-    break;
-  case 83:
-  case 115: // s
-    if (myDir != UP)
-    {
-      myDir = DOWN;
-    }
-    break;
-  case 68:
-  case 100: // d
-    if (myDir != LEFT)
-    {
-      myDir = RIGHT;
-    }
-    break;
-  default:
-    break;
+  switch (input) {
+    case 87:
+    case 119:  // w
+      if (myDir != DOWN) {
+        myDir = UP;
+      }
+      break;
+    case 65:
+    case 97:  // a
+      if (myDir != RIGHT) {
+        myDir = LEFT;
+      }
+      break;
+    case 83:
+    case 115:  // s
+      if (myDir != UP) {
+        myDir = DOWN;
+      }
+      break;
+    case 68:
+    case 100:  // d
+      if (myDir != LEFT) {
+        myDir = RIGHT;
+      }
+      break;
+    default:
+      break;
   }
 }
 
-void Player::movePlayer(int boardWidth, int boardHeight)
-{
+void Player::movePlayer(int boardWidth, int boardHeight) {
   // Get current head position
   objPos head = playerPosList->getHeadElement();
   int newX = head.getObjPos().pos->x;
   int newY = head.getObjPos().pos->y;
 
-  switch (myDir)
-  {
-  case Dir::UP:
-    newY--;
-    break;
-  case Dir::DOWN:
-    newY++;
-    break;
-  case Dir::LEFT:
-    newX--;
-    break;
-  case Dir::RIGHT:
-    newX++;
-    break;
-  default:
-    break;
+  switch (myDir) {
+    case Dir::UP:
+      newY--;
+      break;
+    case Dir::DOWN:
+      newY++;
+      break;
+    case Dir::LEFT:
+      newX--;
+      break;
+    case Dir::RIGHT:
+      newX++;
+      break;
+    default:
+      break;
   }
 
   // Wrap around logic
-  if (newX <= 0)
-    newX = boardWidth - 2;
-  if (newX >= boardWidth - 1)
-    newX = 1;
-  if (newY <= 0)
-    newY = boardHeight - 2;
-  if (newY >= boardHeight - 1)
-    newY = 1;
+  if (newX <= 0) newX = boardWidth - 2;
+  if (newX >= boardWidth - 1) newX = 1;
+  if (newY <= 0) newY = boardHeight - 2;
+  if (newY >= boardHeight - 1) newY = 1;
 
   // Check for collision with itself for game over
-  if (playerPosList->getSize() > 1) // So it doesn't collide at length 1
+  if (playerPosList->getSize() > 1)  // So it doesn't collide at length 1
   {
-    for (int i = 0; i < playerPosList->getSize(); i++)
-    {
+    for (int i = 0; i < playerPosList->getSize(); i++) {
       objPos bodyPart = playerPosList->getElement(i);
-      if (newX == bodyPart.getObjPos().pos->x && newY == bodyPart.getObjPos().pos->y)
-      {
-        mainGameMechsRef->setExitTrue(); // Exit the game
+      if (newX == bodyPart.getObjPos().pos->x &&
+          newY == bodyPart.getObjPos().pos->y) {
+        mainGameMechsRef->setLoseFlag();  // Enter lose screen
         return;
       }
     }
   }
 
   // Check if the new head position overlaps with food
-  objPos food = mainGameMechsRef->getFoodPos(); // Current food position
+  objPos food = mainGameMechsRef->getFoodPos();  // Current food position
 
-  if (newX == food.getObjPos().pos->x && newY == food.getObjPos().pos->y)
-  {
+  if (newX == food.getObjPos().pos->x && newY == food.getObjPos().pos->y) {
     playerPosList->insertHead(objPos(newX, newY, '*'));
 
     mainGameMechsRef->generateFood(*playerPosList);
@@ -123,9 +106,7 @@ void Player::movePlayer(int boardWidth, int boardHeight)
     mainGameMechsRef->incrementScore();
 
     return;
-  }
-  else
-  {
+  } else {
     // Regular movement
     playerPosList->insertHead(objPos(newX, newY, '*'));
     playerPosList->removeTail();
