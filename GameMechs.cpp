@@ -5,19 +5,14 @@
 
 GameMechs::GameMechs() {}
 
-GameMechs::GameMechs(int boardX, int boardY) {
+GameMechs::GameMechs(int boardX, int boardY)
+{
   boardSizeX = boardX;
   boardSizeY = boardY;
   score = 0;
 
-  srand(time(nullptr));  // Random seed
-
-  // Initial food position, no overlap with player
-  // generateFood(objPos(0, 0, '*'));
+  srand(time(nullptr)); // Random seed
 }
-
-// do you need a destructor?
-GameMechs::~GameMechs() {}
 
 bool GameMechs::getExitFlagStatus() const { return exitFlag; }
 
@@ -42,23 +37,31 @@ void GameMechs::setInput(char this_input) { input = this_input; }
 void GameMechs::clearInput() { input = 0; }
 
 // More methods should be added here
-void GameMechs::generateFood(objPosArrayList &blockOffList) {
+void GameMechs::generateFood(objPosArrayList &blockOffList)
+{
   int x, y;
 
-  do {
+  do
+  {
+
+    // Generate random x and y coordinate within borders
     x = rand() % (boardSizeX - 2) + 1;
     y = rand() % (boardSizeY - 2) + 1;
 
     bool overlap = false;
-    for (int i = 0; i < blockOffList.getSize(); ++i) {
+    for (int i = 0; i < blockOffList.getSize(); ++i)
+    {
       objPos temp = blockOffList.getElement(i);
-      if (temp.getObjPos().pos->x == x && temp.getObjPos().pos->y == y) {
+      // Check if the generated position matches any blocked-off position
+      if (temp.getObjPos().pos->x == x && temp.getObjPos().pos->y == y)
+      {
         overlap = true;
         break;
       }
     }
 
-    if (!overlap) {
+    if (!overlap)
+    {
       break;
     }
   } while (true);

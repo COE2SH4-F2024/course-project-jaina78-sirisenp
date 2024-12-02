@@ -7,12 +7,6 @@
 
 class Player
 {
-  // Construct the remaining declaration from the project manual.
-
-  // Only some sample members are included here
-
-  // You will include more data members and member functions to complete your
-  // design.
 
 public:
   enum Dir
@@ -32,7 +26,6 @@ public:
   objPos getPlayerHead() const;
   objPosArrayList *getPlayerPos() const;
 
-  // More methods to be added here
 private:
   objPosArrayList *playerPosList; // Upgraded in iteration 3.
   enum Dir myDir;

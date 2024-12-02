@@ -18,13 +18,16 @@ void DrawScreen(void);
 void LoopDelay(void);
 void CleanUp(void);
 
+// Global objects for the player and game mechanics
 Player *player = nullptr;
 GameMechs *gameMechs = nullptr;
 
-int main(void) {
+int main(void)
+{
   Initialize();
 
-  while (!gameMechs->getExitFlagStatus()) {
+  while (!gameMechs->getExitFlagStatus())
+  {
     GetInput();
     RunLogic();
     DrawScreen();
@@ -34,10 +37,12 @@ int main(void) {
   CleanUp();
 }
 
-void Initialize(void) {
+void Initialize(void)
+{
   MacUILib_init();
   MacUILib_clearScreen();
 
+  // Create game mechanics and player objects
   gameMechs = new GameMechs(LENGTH, HEIGHT);
   player = new Player(gameMechs);
 
@@ -45,46 +50,61 @@ void Initialize(void) {
   gameMechs->generateFood(*player->getPlayerPos());
 }
 
-void GetInput(void) {
-  if (MacUILib_hasChar() == 1) {
+void GetInput(void)
+{
+  // Check if a key has been pressed
+  if (MacUILib_hasChar() == 1)
+  {
     char input = MacUILib_getChar();
     gameMechs->setInput(input);
   }
 }
-void RunLogic(void) {
+void RunLogic(void)
+{
   player->updatePlayerDir();
   player->movePlayer(LENGTH, HEIGHT);
-  if (gameMechs->getInput() == 27) {
+  // ESC is exit key
+  if (gameMechs->getInput() == 27)
+  {
     gameMechs->setExitTrue();
   }
   gameMechs->clearInput();
 }
 
-void DrawScreen(void) {
+void DrawScreen(void)
+{
   MacUILib_clearScreen();
 
   // Draw the game board
 
-  if (!gameMechs->getLoseFlagStatus()) {
-    for (int y = 0; y < HEIGHT; y++) {
-      for (int x = 0; x < LENGTH; x++) {
-        if (y == 0 || y == HEIGHT - 1 || x == 0 || x == LENGTH - 1) {
+  if (!gameMechs->getLoseFlagStatus())
+  {
+    for (int y = 0; y < HEIGHT; y++)
+    {
+      for (int x = 0; x < LENGTH; x++)
+      {
+        if (y == 0 || y == HEIGHT - 1 || x == 0 || x == LENGTH - 1)
+        {
           MacUILib_printf("#");
-        } else {
+        }
+        else
+        {
           bool isPrinted = false;
 
           // Iterate through the positions in playerPosList
           objPosArrayList *playerPosList =
-              player->getPlayerPos();  // Player positions
-          for (int i = 0; i < playerPosList->getSize(); i++) {
+              player->getPlayerPos(); // Player positions
+          for (int i = 0; i < playerPosList->getSize(); i++)
+          {
             objPos currentBodyPart =
-                playerPosList->getElement(i);  // i-th body part
+                playerPosList->getElement(i); // i-th body part
             int snakeX = currentBodyPart.getObjPos().pos->x;
             int snakeY = currentBodyPart.getObjPos().pos->y;
 
             // Check if position matches the current grid position
-            if (x == snakeX && y == snakeY) {
-              MacUILib_printf("%c", currentBodyPart.getSymbol());  // Snake body
+            if (x == snakeX && y == snakeY)
+            {
+              MacUILib_printf("%c", currentBodyPart.getSymbol()); // Snake body
               isPrinted = true;
               break;
             }
@@ -92,13 +112,15 @@ void DrawScreen(void) {
 
           // If no snake body is found, print food
           if (!isPrinted && x == gameMechs->getFoodPos().getObjPos().pos->x &&
-              y == gameMechs->getFoodPos().getObjPos().pos->y) {
+              y == gameMechs->getFoodPos().getObjPos().pos->y)
+          {
             MacUILib_printf("%c",
-                            gameMechs->getFoodPos().getSymbol());  // Print food
+                            gameMechs->getFoodPos().getSymbol()); // Print food
           }
 
           // If no snake body or food, print an empty space
-          else if (!isPrinted) {
+          else if (!isPrinted)
+          {
             MacUILib_printf(" ");
           }
         }
@@ -109,7 +131,9 @@ void DrawScreen(void) {
         "Use the WASD keys to move the snake\nEat food ($) to grow "
         "bigger\nAvoid bumping into yourself or you will lose!\n");
     MacUILib_printf("Score: %d\n", gameMechs->getScore());
-  } else {
+  }
+  else
+  {
     printf("You lost!\nScore: %d\n", gameMechs->getScore());
   }
   // MacUILib_printf("\n%d, %d,
@@ -120,11 +144,13 @@ void DrawScreen(void) {
   MacUILib_printf("Press 'ESC' to exit");
 }
 
-void LoopDelay(void) {
-  MacUILib_Delay(DELAY_CONST);  // 0.1s delay
+void LoopDelay(void)
+{
+  MacUILib_Delay(DELAY_CONST); // 0.1s delay
 }
 
-void CleanUp(void) {
+void CleanUp(void)
+{
   MacUILib_clearScreen();
 
   MacUILib_uninit();
