@@ -12,6 +12,8 @@ GameMechs::GameMechs(int boardX, int boardY)
   score = 0;
 
   srand(time(nullptr)); // Random seed
+
+  foodBucket = new Food();
 }
 
 bool GameMechs::getExitFlagStatus() const { return exitFlag; }
@@ -22,7 +24,18 @@ char GameMechs::getInput() const { return input; }
 
 int GameMechs::getScore() const { return score; }
 
-void GameMechs::incrementScore() { score++; }
+void GameMechs::incrementScore(bool isSpecialFood)
+{
+
+  if (isSpecialFood)
+  {
+    score += 10; // Special food gives 10 points
+  }
+  else
+  {
+    score++; // Regular food gives 1 point
+  }
+}
 
 int GameMechs::getBoardSizeX() const { return boardSizeX; }
 
@@ -36,38 +49,24 @@ void GameMechs::setInput(char this_input) { input = this_input; }
 
 void GameMechs::clearInput() { input = 0; }
 
-// More methods should be added here
+// Generate food
 void GameMechs::generateFood(objPosArrayList &blockOffList)
 {
-  int x, y;
-
-  do
-  {
-
-    // Generate random x and y coordinate within borders
-    x = rand() % (boardSizeX - 2) + 1;
-    y = rand() % (boardSizeY - 2) + 1;
-
-    bool overlap = false;
-    for (int i = 0; i < blockOffList.getSize(); ++i)
-    {
-      objPos temp = blockOffList.getElement(i);
-      // Check if the generated position matches any blocked-off position
-      if (temp.getObjPos().pos->x == x && temp.getObjPos().pos->y == y)
-      {
-        overlap = true;
-        break;
-      }
-    }
-
-    if (!overlap)
-    {
-      break;
-    }
-  } while (true);
-
-  // Set the food's position
-  food.setObjPos(x, y, '$');
+  foodBucket->generateFood(5, boardSizeX, boardSizeY, blockOffList); // Generate 5 foods
 }
 
-objPos GameMechs::getFoodPos() const { return food; }
+// Get the food bucket
+Food *GameMechs::getFoodBucket() const
+{
+  return foodBucket;
+}
+
+objPos GameMechs::getFoodPos() const
+{
+  if (foodBucket->getBucketSize() > 0)
+  {
+    return foodBucket->getFood(0); // Get first food in bucket
+  }
+  // Return a default objPos if the bucket is empty
+  return objPos(-1, -1, ' ');
+}

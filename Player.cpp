@@ -111,25 +111,34 @@ void Player::movePlayer(int boardWidth, int boardHeight)
     }
   }
 
-  // Check if the new head position overlaps with food
-  objPos food = mainGameMechsRef->getFoodPos(); // Current food position
+  Food *foodBucket = mainGameMechsRef->getFoodBucket();
 
-  if (newX == food.getObjPos().pos->x && newY == food.getObjPos().pos->y)
+  // Check if the new head position overlaps with any food
+  for (int i = 0; i < foodBucket->getBucketSize(); ++i)
   {
-    playerPosList->insertHead(objPos(newX, newY, '*'));
+    objPos food = foodBucket->getFood(i);
 
-    // Generate food item
-    mainGameMechsRef->generateFood(*playerPosList);
+    if (newX == food.getObjPos().pos->x && newY == food.getObjPos().pos->y)
+    {
+      // Check type of food for special
+      bool isSpecialFood = (food.getObjPos().symbol == '&');
 
-    // Increment Score
-    mainGameMechsRef->incrementScore();
+      // Increment score
+      mainGameMechsRef->incrementScore(isSpecialFood);
 
-    return;
+      // Remove food
+      foodBucket->removeFood(i);
+
+      // Generate new foods
+      mainGameMechsRef->generateFood(*playerPosList);
+
+      // Grow snake head
+      playerPosList->insertHead(objPos(newX, newY, '*'));
+      return;
+    }
   }
-  else
-  {
-    // Regular movement
-    playerPosList->insertHead(objPos(newX, newY, '*'));
-    playerPosList->removeTail();
-  }
+
+  // Regular movement
+  playerPosList->insertHead(objPos(newX, newY, '*'));
+  playerPosList->removeTail();
 }
