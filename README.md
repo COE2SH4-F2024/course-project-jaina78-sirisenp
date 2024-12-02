@@ -3,9 +3,11 @@
 
 Course Project
 
-Section: [L01, L06]
+Lab Sections: [L01, L06]
+Class Section: [C02]
 
 Team Information
+
 Member 1 MacID: [jaina78]
 Member 1 StudentID: [400495996]
 
